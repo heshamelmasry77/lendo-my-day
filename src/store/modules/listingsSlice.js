@@ -11,6 +11,7 @@ const slice = createSlice({
     },
     reducers: { // Here are the functions which amend the state // mutations for state
         SET_PRODUCTS: (state, action) => { // e.g
+            console.log("SET_PRODUCTS: action.payload", action.payload)
             state.products = action.payload;
         },
     },
@@ -21,9 +22,10 @@ export default slice.reducer; // Here I import the module in the index.js
 const {SET_PRODUCTS} = slice.actions
 
 export const fetchProducts = () => async dispatch => {
+    console.log("fetchProducts ran")
     try {
         // Gets product data from the JSON file to be created.
-        dispatch(SET_PRODUCTS());
+        dispatch(SET_PRODUCTS(["some item"]));
     } catch (e) {
         return console.error(e.message);
     }

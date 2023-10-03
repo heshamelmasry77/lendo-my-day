@@ -10,9 +10,6 @@ const reducer = combineReducers({
 
 const index = configureStore({
     reducer,
-
-
-
-})
+});
 
 export default index;

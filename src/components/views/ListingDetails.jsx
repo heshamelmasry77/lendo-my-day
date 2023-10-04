@@ -1,6 +1,6 @@
 function ListingDetails() {
   return (
-    <div>
+    <div className={"py-4"}>
       {/* Listing Images*/}
       <div className="mx-auto mt-6 max-w-2xl px-6 grid lg:max-w-7xl lg:grid-cols-3 gap-8 lg:px-8">
         <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 overflow-hidden rounded-lg">
@@ -18,7 +18,6 @@ function ListingDetails() {
           />
         </div>
       </div>
-
       <div
         className={
           "flex flex-col sm:flex-row gap-6 gap-x-4 mx-auto mt-6 max-w-2xl lg:max-w-7xl px-6 lg:px-8"

@@ -1,26 +1,14 @@
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchProducts } from "./store/modules/listingsSlice.js";
 import Router from "./routes/Router.jsx";
+import Header from "./components/shared/Header.jsx";
+import Footer from "./components/shared/Footer.jsx";
 
 function App() {
-  const dispatch = useDispatch(); // Help to dispatch actions, Example: dispatch(fetchProducts())
-  const { products } = useSelector((state) => state.listings); // GETS THE PRODUCTS FROM THE STORE
-
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
-
-  console.log(products);
   return (
     <>
       <div>
+        <Header />
         <Router />
-        <h1 className="text-3xl font-bold underline bg-amber-300">
-          {products.map((product, index) => (
-            <div key={index}>{product}</div>
-          ))}
-        </h1>
+        <Footer />
       </div>
     </>
   );

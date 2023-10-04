@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProducts } from "./store/modules/listingsSlice.js";
+import Router from "./routes/Router.jsx";
 
 function App() {
   const dispatch = useDispatch(); // Help to dispatch actions, Example: dispatch(fetchProducts())
@@ -14,6 +15,7 @@ function App() {
   return (
     <>
       <div>
+        <Router />
         <h1 className="text-3xl font-bold underline bg-amber-300">
           {products.map((product, index) => (
             <div key={index}>{product}</div>

@@ -2,7 +2,7 @@ function Footer() {
   return (
     <>
       <footer className="flex grow">
-        <div className="border-t border-gray-100 bg-gray-50 py-10 grow">
+        <div className="border-t border-gray-100 bg-gray-50 py-10 grow flex">
           <nav className="mx-auto flex w-full max-w-7xl items-center gap-x-4 px-6 text-sm leading-7 text-gray-600 lg:px-8">
             <a href="#">Contact support</a>
             <svg
@@ -21,6 +21,9 @@ function Footer() {
               <circle cx="1" cy="1" r="1"></circle>
             </svg>
             <a href="#">Twitter</a>
+            <p className="text-sm leading-7 text-gray-400 ml-auto">
+              © Lendo, Inc. All rights reserved.
+            </p>
           </nav>
         </div>
       </footer>

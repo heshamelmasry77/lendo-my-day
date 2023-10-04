@@ -7,7 +7,7 @@ function CheckOut() {
         <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
           <div className="flex items-start justify-between">
             <h2
-              className="text-lg font-medium text-gray-900"
+              className="text-lg font-medium text-gray-700"
               id="slide-over-title"
             >
               Shopping cart
@@ -28,7 +28,7 @@ function CheckOut() {
 
                   <div className="ml-4 flex flex-1 flex-col">
                     <div>
-                      <div className="flex justify-between text-base font-medium text-gray-900">
+                      <div className="flex justify-between text-base font-medium text-gray-700">
                         <h3>
                           <a href="#">Throwback Hip Bag</a>
                         </h3>
@@ -61,7 +61,7 @@ function CheckOut() {
 
                   <div className="ml-4 flex flex-1 flex-col">
                     <div>
-                      <div className="flex justify-between text-base font-medium text-gray-900">
+                      <div className="flex justify-between text-base font-medium text-gray-700">
                         <h3>
                           <a href="#">Medium Stuff Satchel</a>
                         </h3>
@@ -94,7 +94,7 @@ function CheckOut() {
 
                   <div className="ml-4 flex flex-1 flex-col">
                     <div>
-                      <div className="flex justify-between text-base font-medium text-gray-900">
+                      <div className="flex justify-between text-base font-medium text-gray-700">
                         <h3>
                           <a href="#">Zip Tote Basket</a>
                         </h3>
@@ -124,7 +124,7 @@ function CheckOut() {
         </div>
 
         <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-          <div className="flex justify-between text-base font-medium text-gray-900">
+          <div className="flex justify-between text-base font-medium text-gray-700">
             <p>Subtotal</p>
             <p>$262.00</p>
           </div>

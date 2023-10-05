@@ -10,12 +10,16 @@ const slice = createSlice({
   name: "listings",
   initialState: {
     // Here is the initial state // = data
-    products: []
+    products: [],
+    singleProduct: {}
   },
   reducers: {
     // Here are the functions which amend the state // mutations for state
     SET_PRODUCTS: (state, action) => {
       state.products = action.payload;
+    },
+    SET_SINGLE_PRODUCT: (state, action) => {
+      state.singleProduct = action.payload;
     }
   }
 });
@@ -23,6 +27,7 @@ export default slice.reducer; // Here I import the module in the index.js
 
 // Actions // api calls etc
 const { SET_PRODUCTS } = slice.actions;
+const { SET_SINGLE_PRODUCT } = slice.actions;
 
 export const fetchProducts = () => async (dispatch) => {
   try {
@@ -31,6 +36,22 @@ export const fetchProducts = () => async (dispatch) => {
     setTimeout(() => {
       dispatch(SET_PRODUCTS(listingsData.items));
     }, 2000); // this will mimic 2-second delay as if i am fetching data from an API
+  } catch (e) {
+    return console.error(e.message);
+  }
+};
+
+export const fetchProductById = (id) => async (dispatch) => {
+  try {
+    // Imaginary fetch API call
+    console.log("listingsData:", listingsData.items);
+    const singleProductData = listingsData.items.find(
+      (product) => product.id === Number(id)
+    );
+    console.log("singleProductData", singleProductData);
+    setTimeout(() => {
+      dispatch(SET_SINGLE_PRODUCT(singleProductData));
+    }, 2000); // this will mimic 2-second delay as if I am fetching single product data from an API
   } catch (e) {
     return console.error(e.message);
   }

@@ -5,7 +5,7 @@ import { fetchProductById } from "../../store/modules/listingsSlice.js";
 import { addSingleProductToCart } from "../../store/modules/cartSlice.js";
 
 function ListingDetails() {
-  const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
+  const [selectedOptions, setSelectedOptions] = useState(null);
 
   const dispatch = useDispatch();
   let { id } = useParams();
@@ -18,14 +18,16 @@ function ListingDetails() {
     }
   }, [dispatch, id]);
 
-  const handleSelectedOption = (variantIndex) => {
-    console.log("variantIndex", variantIndex);
-    setSelectedOptionIndex(variantIndex);
+  const handleSelectedOptions = (options) => {
+    // Refresh the selected Options
+    setSelectedOptions(null);
+    console.log("selectedOptions", options);
+    setSelectedOptions(options);
   };
 
   useEffect(() => {
-    console.log("selectedOptionIndex after update:", selectedOptionIndex);
-  }, [selectedOptionIndex]);
+    console.log("selectedOptions after update:", selectedOptions);
+  }, [selectedOptions]);
 
   return (
     <>
@@ -131,42 +133,80 @@ function ListingDetails() {
               {singleProduct &&
                 singleProduct.options &&
                 singleProduct.options.length && (
-                  <div>
-                    <label
-                      htmlFor="variant"
-                      className="block text-sm font-medium leading-6 text-gray-900 sr-only"
-                    >
-                      Select Variant
-                    </label>
-                    <select
-                      id="variant"
-                      name="variant"
-                      className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-green-600 sm:text-sm sm:leading-6"
-                      onChange={(e) =>
-                        handleSelectedOption(Number(e.target.value))
-                      }
-                    >
-                      <option value="" disabled>
+                  <div className="flex flex-col gap-y-4">
+                    <div>
+                      <label
+                        htmlFor="variant"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
                         Select Variant
-                      </option>
-                      {singleProduct.options.map((option, index) => (
-                        <option
-                          key={index}
-                          value={index}
-                          disabled={option.quantity <= 0}
-                        >
-                          Color: {option.color}, Power: {option.power}W,
-                          Available Quantity: {option.quantity}
+                      </label>
+                      <select
+                        id="variant"
+                        name="variant"
+                        className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-green-600 sm:text-sm sm:leading-6"
+                        onChange={(e) =>
+                          handleSelectedOptions(JSON.parse(e.target.value))
+                        }
+                      >
+                        <option value="" disabled selected={true}>
+                          Select Variant
                         </option>
-                      ))}
-                    </select>
+                        {singleProduct.options.map((option, index) => (
+                          <option
+                            key={index}
+                            value={JSON.stringify(option)}
+                            disabled={option.quantity <= 0}
+                          >
+                            Color: {option.color}, Power: {option.power}W
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {/*QUANTITY*/}
+                    <div>
+                      <label
+                        htmlFor="quantity"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Select Quantity
+                      </label>
+                      <select
+                        disabled={!selectedOptions}
+                        id="quantity"
+                        name="quantity"
+                        className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-green-600 sm:text-sm sm:leading-6"
+                      >
+                        <option value="" disabled selected={true}>
+                          Select Quantity
+                        </option>
+                        {selectedOptions &&
+                          Array.from({ length: selectedOptions.quantity }).map(
+                            (_, index) => (
+                              <option key={index} value={index + 1}>
+                                {index + 1}
+                              </option>
+                            )
+                          )}
+                      </select>
+                    </div>
                   </div>
                 )}
 
               <button
                 type="button"
-                onClick={() => dispatch(addSingleProductToCart(singleProduct))}
-                className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                onClick={() =>
+                  dispatch(
+                    addSingleProductToCart(singleProduct, selectedOptions)
+                  )
+                }
+                className={`mt-10 flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 
+                            ${
+                              !selectedOptions
+                                ? "bg-gray-300 cursor-not-allowed text-gray-600 hover:bg-gray-300 focus:ring-gray-500"
+                                : "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500"
+                            }`}
+                disabled={!selectedOptions}
               >
                 Add to cart
               </button>

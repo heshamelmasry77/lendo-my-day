@@ -1,48 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-const productsDummyData = [
-  {
-    id: 1,
-    name: "Earthen Bottle",
-    href: "#",
-    price: "$48",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-01.jpg",
-    imageAlt:
-      "Tall slender porcelain bottle with natural clay textured body and cork stopper."
-  },
-  {
-    id: 2,
-    name: "Nomad Tumbler",
-    href: "#",
-    price: "$35",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-02.jpg",
-    imageAlt:
-      "Olive drab green insulated bottle with flared screw lid and flat top."
-  },
-  {
-    id: 3,
-    name: "Focus Paper Refill",
-    href: "#",
-    price: "$89",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-03.jpg",
-    imageAlt:
-      "Person using a pen to cross a task off a productivity paper card."
-  },
-  {
-    id: 4,
-    name: "Machined Mechanical Pencil",
-    href: "#",
-    price: "$35",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg",
-    imageAlt:
-      "Hand holding black machined steel mechanical pencil with brass tip and top."
-  }
-  // More products...
-];
+import listingsData from "../../data/listings.json";
 
 // Slice
 // A function that accepts an initial state, an object full of reducer functions,
@@ -69,8 +26,11 @@ const { SET_PRODUCTS } = slice.actions;
 
 export const fetchProducts = () => async (dispatch) => {
   try {
-    // Gets product data from the JSON file to be created.
-    dispatch(SET_PRODUCTS(productsDummyData));
+    // Imaginary fetch API call
+
+    setTimeout(() => {
+      dispatch(SET_PRODUCTS(listingsData.items));
+    }, 2000); // this will mimic 2-second delay as if i am fetching data from an API
   } catch (e) {
     return console.error(e.message);
   }

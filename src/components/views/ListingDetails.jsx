@@ -5,7 +5,8 @@ import { fetchProductById } from "../../store/modules/listingsSlice.js";
 import { addSingleProductToCart } from "../../store/modules/cartSlice.js";
 
 function ListingDetails() {
-  const [selectedOptions, setSelectedOptions] = useState(null);
+  const [selectedVariants, setSelectedVariants] = useState("Select Variant");
+  const [selectedQuantity, setSelectedQuantity] = useState("Select Quantity");
 
   const dispatch = useDispatch();
   let { id } = useParams();
@@ -18,16 +19,31 @@ function ListingDetails() {
     }
   }, [dispatch, id]);
 
-  const handleSelectedOptions = (options) => {
-    // Refresh the selected Options
-    setSelectedOptions(null);
-    console.log("selectedOptions", options);
-    setSelectedOptions(options);
+  const handleSelectedVariants = (options) => {
+    // Refresh the selected Variants
+    console.log("selectedVariants", options);
+    setSelectedVariants(options);
+  };
+  const handleSelectedQuantity = (quantity) => {
+    console.log("selectedQuantity", quantity);
+    setSelectedQuantity(quantity);
+  };
+  const handleAddProductToCart = () => {
+    dispatch(
+      addSingleProductToCart(singleProduct, selectedVariants, selectedQuantity)
+    );
+    // REST THE SELECT OPTION VALUES
+    setSelectedVariants("Select Variant");
+    setSelectedQuantity("Select Quantity");
   };
 
   useEffect(() => {
-    console.log("selectedOptions after update:", selectedOptions);
-  }, [selectedOptions]);
+    console.log("selectedVariants after update:", selectedVariants);
+  }, [selectedVariants]);
+
+  useEffect(() => {
+    console.log("selectedQuantity after update:", selectedQuantity);
+  }, [selectedQuantity]);
 
   return (
     <>
@@ -146,10 +162,11 @@ function ListingDetails() {
                         name="variant"
                         className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-green-600 sm:text-sm sm:leading-6"
                         onChange={(e) =>
-                          handleSelectedOptions(JSON.parse(e.target.value))
+                          handleSelectedVariants(JSON.parse(e.target.value))
                         }
+                        value={selectedVariants}
                       >
-                        <option value="" disabled selected={true}>
+                        <option value="Select Variant" disabled>
                           Select Variant
                         </option>
                         {singleProduct.options.map((option, index) => (
@@ -158,11 +175,14 @@ function ListingDetails() {
                             value={JSON.stringify(option)}
                             disabled={option.quantity <= 0}
                           >
-                            Color: {option.color}, Power: {option.power}W
+                            {option.color && `Color: ${option.color}, `}
+                            {option.power && `Power: ${option.power} w, `}
+                            {option.storage && `Storage: ${option.storage} gb`}
                           </option>
                         ))}
                       </select>
                     </div>
+
                     {/*QUANTITY*/}
                     <div>
                       <label
@@ -172,16 +192,20 @@ function ListingDetails() {
                         Select Quantity
                       </label>
                       <select
-                        disabled={!selectedOptions}
+                        disabled={!selectedVariants}
                         id="quantity"
                         name="quantity"
                         className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-green-600 sm:text-sm sm:leading-6"
+                        onChange={(e) =>
+                          handleSelectedQuantity(JSON.parse(e.target.value))
+                        }
+                        value={selectedQuantity}
                       >
-                        <option value="" disabled selected={true}>
+                        <option value="Select Quantity" disabled>
                           Select Quantity
                         </option>
-                        {selectedOptions &&
-                          Array.from({ length: selectedOptions.quantity }).map(
+                        {selectedVariants &&
+                          Array.from({ length: selectedVariants.quantity }).map(
                             (_, index) => (
                               <option key={index} value={index + 1}>
                                 {index + 1}
@@ -195,18 +219,17 @@ function ListingDetails() {
 
               <button
                 type="button"
-                onClick={() =>
-                  dispatch(
-                    addSingleProductToCart(singleProduct, selectedOptions)
-                  )
-                }
+                onClick={() => handleAddProductToCart()}
                 className={`mt-10 flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 
                             ${
-                              !selectedOptions
+                              !selectedVariants ||
+                              selectedVariants === "Select Variant"
                                 ? "bg-gray-300 cursor-not-allowed text-gray-600 hover:bg-gray-300 focus:ring-gray-500"
                                 : "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500"
                             }`}
-                disabled={!selectedOptions}
+                disabled={
+                  !selectedVariants || selectedVariants === "Select Variant"
+                }
               >
                 Add to cart
               </button>

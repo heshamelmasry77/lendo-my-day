@@ -56,3 +56,7 @@ export const fetchProductById = (id) => async (dispatch) => {
     return console.error(e.message);
   }
 };
+
+export const setSingleProductState = (singleProduct) => (dispatch) => {
+  dispatch(SET_SINGLE_PRODUCT(singleProduct));
+};

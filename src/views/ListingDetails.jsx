@@ -31,10 +31,13 @@ function ListingDetails() {
     setSelectedQuantity(quantity);
   };
   const handleAddProductToCart = () => {
+    console.log(selectedVariants);
+    console.log(selectedQuantity);
+    console.log(singleProduct);
     dispatch(
       addSingleProductToCart(singleProduct, selectedVariants, selectedQuantity)
     );
-    // REST THE SELECT OPTION VALUES
+    // // REST THE SELECT OPTION VALUES
     setSelectedVariants("Select Variant");
     setSelectedQuantity("Select Quantity");
   };

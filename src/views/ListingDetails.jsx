@@ -7,6 +7,7 @@ import Price from "../components/ListingDetails/Price.jsx";
 import VariantsSelector from "../components/ListingDetails/VariantsSelector.jsx";
 import QuantitySelector from "../components/ListingDetails/QuantitySelector.jsx";
 import AddToCartButton from "../components/ListingDetails/AddToCartButton.jsx";
+import ProductImage from "../components/shared/utils/ProductImage.jsx";
 
 function ListingDetails() {
   const [selectedVariants, setSelectedVariants] = useState("Select Variant");
@@ -45,11 +46,7 @@ function ListingDetails() {
           {/* Listing Images*/}
           <div className="mx-auto mt-6 max-w-2xl px-6 grid lg:max-w-7xl lg:grid-cols-3 gap-8 lg:px-8">
             <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 overflow-hidden rounded-lg">
-              <img
-                src="https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg"
-                alt="Model wearing plain white basic tee."
-                className="h-full w-full object-cover object-center"
-              />
+              <ProductImage product={singleProduct} />
             </div>
           </div>
           <div

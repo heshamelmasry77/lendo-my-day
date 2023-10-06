@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchProducts } from "../store/modules/listingsSlice.js";
-import productImgPlaceholder from "../assets/images/no-image-placeholder.svg";
+import ProductImage from "../components/shared/utils/ProductImage.jsx";
 
 function Listings() {
   const dispatch = useDispatch(); // Help to dispatch actions, Example: dispatch(fetchProducts())
@@ -11,26 +11,6 @@ function Listings() {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
-
-  function getProductImage(img) {
-    if (img && img.imageSrc) {
-      return (
-        <img
-          src={img.imageSrc}
-          alt={img.imageAlt || "Product Image"}
-          className="h-full w-full object-cover object-center group-hover:opacity-75"
-        />
-      );
-    } else {
-      return (
-        <img
-          src={productImgPlaceholder}
-          alt="No product image available"
-          className="h-full w-full object-contain object-center group-hover:opacity-75"
-        />
-      );
-    }
-  }
 
   return (
     <div className="bg-white">
@@ -50,7 +30,7 @@ function Listings() {
                 </span>
               )}
               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 hover:bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 border border-y-gray-300">
-                {getProductImage(product)}
+                <ProductImage product={product} />
               </div>
               <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
               <h4 className="mt-4 text-xs text-gray-700">{product.brand}</h4>

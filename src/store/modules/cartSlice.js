@@ -28,21 +28,15 @@ const { ADD_PRODUCT_TO_CART } = slice.actions;
 export const addSingleProductToCart =
   (productData, selectedVariant, selectedQuantity) => async (dispatch) => {
     const quantityToReduce = selectedQuantity;
-    console.log(productData);
     let clonedProductData = JSON.parse(JSON.stringify(productData));
-    console.log("quantityToReduce: ", quantityToReduce);
 
     for (let i = 0; i < clonedProductData.options.length; i++) {
-      console.log(selectedVariant);
-      console.log(clonedProductData.options[i]);
       // loop on the options array
-
       // Compare both objects
       if (
         Object.entries(clonedProductData.options[i]).toString() ===
         Object.entries(selectedVariant).toString()
       ) {
-        console.log("here");
         //  if I find the object then
         clonedProductData.options[i] = {
           ...selectedVariant,
@@ -50,14 +44,12 @@ export const addSingleProductToCart =
         };
       }
     }
-    console.log("clonedProductData", clonedProductData);
 
     const productToAddToCart = {
       ...clonedProductData,
       selectedVariant,
       selectedQuantity
     };
-    console.log("productToAddToCart", productToAddToCart);
     // Add the Product to the cart
     dispatch(ADD_PRODUCT_TO_CART(productToAddToCart));
     // Updates the single product state

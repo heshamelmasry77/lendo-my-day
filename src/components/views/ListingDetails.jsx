@@ -10,7 +10,6 @@ function ListingDetails() {
 
   const dispatch = useDispatch();
   let { id } = useParams();
-  console.log("product id:", id);
   const { singleProduct } = useSelector((state) => state.listings); // GETS YOU THE PRODUCTS FROM THE STORE
   useEffect(() => {
     if (id) {
@@ -21,11 +20,9 @@ function ListingDetails() {
 
   const handleSelectedVariants = (options) => {
     // Refresh the selected Variants
-    console.log("selectedVariants", options);
     setSelectedVariants(options);
   };
   const handleSelectedQuantity = (quantity) => {
-    console.log("selectedQuantity", quantity);
     setSelectedQuantity(quantity);
   };
   const handleAddProductToCart = () => {
@@ -36,14 +33,6 @@ function ListingDetails() {
     setSelectedVariants("Select Variant");
     setSelectedQuantity("Select Quantity");
   };
-
-  useEffect(() => {
-    console.log("selectedVariants after update:", selectedVariants);
-  }, [selectedVariants]);
-
-  useEffect(() => {
-    console.log("selectedQuantity after update:", selectedQuantity);
-  }, [selectedQuantity]);
 
   return (
     <>

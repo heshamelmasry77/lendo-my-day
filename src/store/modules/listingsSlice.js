@@ -44,11 +44,9 @@ export const fetchProducts = () => async (dispatch) => {
 export const fetchProductById = (id) => async (dispatch) => {
   try {
     // Imaginary fetch API call
-    console.log("listingsData:", listingsData.items);
     const singleProductData = listingsData.items.find(
       (product) => product.id === Number(id)
     );
-    console.log("singleProductData", singleProductData);
     setTimeout(() => {
       dispatch(SET_SINGLE_PRODUCT(singleProductData));
     }, 2000); // this will mimic 2-second delay as if I am fetching single product data from an API

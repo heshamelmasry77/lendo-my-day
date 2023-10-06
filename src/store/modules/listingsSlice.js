@@ -42,6 +42,8 @@ export const fetchProducts = () => async (dispatch) => {
 };
 
 export const fetchProductById = (id) => async (dispatch) => {
+  // Reset the Single Product state to improve the UX of loading the product
+  dispatch(SET_SINGLE_PRODUCT({}));
   try {
     // Imaginary fetch API call
     const singleProductData = listingsData.items.find(

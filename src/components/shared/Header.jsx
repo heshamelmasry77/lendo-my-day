@@ -1,6 +1,9 @@
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Header() {
+  const { numberOfProductsInCart } = useSelector((state) => state.cart); // GETS YOU THE PRODUCTS FROM THE STORE
+
   function getNavLinkClasses(isActive) {
     const baseClasses =
       "relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out";
@@ -60,7 +63,7 @@ function Header() {
                     ></path>
                   </svg>
                   <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                    0
+                    {numberOfProductsInCart}
                   </span>
                   <span className="sr-only">items in cart, view bag</span>
                 </NavLink>

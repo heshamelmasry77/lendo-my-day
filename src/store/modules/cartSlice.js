@@ -17,6 +17,25 @@ const slice = createSlice({
         0
       );
       state.numberOfProductsInCart = totalSelectedQuantity;
+    },
+
+    REMOVE_PRODUCT_FROM_CART: (state, action) => {
+      const productToRemoveFromCart = action.payload;
+      state.productsInCart = state.productsInCart.filter(
+        (product) =>
+          !(
+            product.id === productToRemoveFromCart.id &&
+            product.selectedVariant.color ===
+              productToRemoveFromCart.selectedVariant.color &&
+            product.selectedVariant.quantity ===
+              productToRemoveFromCart.selectedVariant.quantity
+          )
+      );
+      const totalSelectedQuantity = state.productsInCart.reduce(
+        (total, product) => total + product.selectedQuantity,
+        0
+      );
+      state.numberOfProductsInCart = totalSelectedQuantity;
     }
   }
 });
@@ -24,6 +43,7 @@ export default slice.reducer; // Here I import the module in the index.js
 
 // Actions // api calls etc
 const { ADD_PRODUCT_TO_CART } = slice.actions;
+const { REMOVE_PRODUCT_FROM_CART } = slice.actions;
 
 export const addSingleProductToCart =
   (productData, selectedVariant, selectedQuantity) => async (dispatch) => {
@@ -46,7 +66,7 @@ export const addSingleProductToCart =
     }
 
     const productToAddToCart = {
-      ...clonedProductData,
+      ...productData,
       selectedVariant,
       selectedQuantity
     };
@@ -54,4 +74,9 @@ export const addSingleProductToCart =
     dispatch(ADD_PRODUCT_TO_CART(productToAddToCart));
     // Updates the single product state
     dispatch(setSingleProductState(clonedProductData));
+  };
+export const removeProductFromCart =
+  (productToRemoveFromCart) => async (dispatch) => {
+    console.log("productToRemoveFromCart", productToRemoveFromCart);
+    dispatch(REMOVE_PRODUCT_FROM_CART(productToRemoveFromCart));
   };

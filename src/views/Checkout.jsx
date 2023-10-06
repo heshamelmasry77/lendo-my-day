@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ProductImage from "../components/shared/utils/ProductImage.jsx";
 import { NavLink } from "react-router-dom";
+import { removeProductFromCart } from "../store/modules/cartSlice.js";
 
 function CheckOut() {
+  const dispatch = useDispatch();
+
   const { productsInCart } = useSelector((state) => state.cart); // GETS THE PRODUCTS IN CART
   console.log("productsInCart: ", productsInCart);
 
@@ -17,6 +19,13 @@ function CheckOut() {
     )
     .toFixed(2);
 
+  const handleNewSelectedQuantity = (newSelectedQuantity) => {
+    console.log("newSelectedQuantity: ", newSelectedQuantity);
+  };
+
+  const handleRemoveProductFromCart = (selectedProductToRemove) => {
+    dispatch(removeProductFromCart(selectedProductToRemove));
+  };
   return (
     <div
       className={"mx-auto mt-6 max-w-2xl px-6 grid lg:max-w-7xl gap-8 lg:px-8"}
@@ -33,8 +42,8 @@ function CheckOut() {
             <div className="mt-8">
               <div className="flow-root">
                 <ul role="list" className="-my-6 divide-y divide-gray-200">
-                  {productsInCart.map((product) => (
-                    <li key={product.id} className="flex py-6">
+                  {productsInCart.map((product, index) => (
+                    <li key={index} className="flex py-6">
                       <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                         <ProductImage product={product} />
                       </div>
@@ -56,10 +65,38 @@ function CheckOut() {
                         </div>
                         <div className="flex flex-1 items-end justify-between text-sm">
                           <p className="text-gray-500">
-                            Qty {product.selectedQuantity}
+                            <label
+                              htmlFor="quantity"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              Qty
+                            </label>
+                            <select
+                              id="quantity"
+                              name="quantity"
+                              className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-green-600 sm:text-sm sm:leading-6"
+                              value={product.selectedQuantity}
+                              onChange={(e) =>
+                                handleNewSelectedQuantity(
+                                  JSON.parse(e.target.value)
+                                )
+                              }
+                            >
+                              {product &&
+                                Array.from({
+                                  length: product.selectedVariant.quantity
+                                }).map((_, index) => (
+                                  <option key={index} value={index + 1}>
+                                    {index + 1}
+                                  </option>
+                                ))}
+                            </select>
                           </p>
                           <div className="flex">
                             <button
+                              onClick={() =>
+                                handleRemoveProductFromCart(product)
+                              }
                               type="button"
                               className="font-medium text-green-600 hover:text-green-500"
                             >

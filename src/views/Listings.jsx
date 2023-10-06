@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchProducts } from "../../store/modules/listingsSlice.js";
-import productImgPlaceholder from "../../assets/images/no-image-placeholder.svg";
+import { fetchProducts } from "../store/modules/listingsSlice.js";
+import productImgPlaceholder from "../assets/images/no-image-placeholder.svg";
 
 function Listings() {
   const dispatch = useDispatch(); // Help to dispatch actions, Example: dispatch(fetchProducts())

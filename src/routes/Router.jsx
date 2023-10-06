@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import Listings from "../components/views/Listings.jsx";
-import ListingDetails from "../components/views/ListingDetails.jsx";
-import Checkout from "../components/views/Checkout.jsx";
-import NotFound from "../components/views/NotFoundPage.jsx";
+import Listings from "../views/Listings.jsx";
+import ListingDetails from "../views/ListingDetails.jsx";
+import Checkout from "../views/Checkout.jsx";
+import NotFound from "../views/NotFoundPage.jsx";
 
 function Router() {
   return (

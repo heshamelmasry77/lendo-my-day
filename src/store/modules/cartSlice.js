@@ -28,7 +28,7 @@ const { ADD_PRODUCT_TO_CART } = slice.actions;
 export const addSingleProductToCart =
   (productData, selectedVariant, selectedQuantity) => async (dispatch) => {
     const quantityToReduce = selectedQuantity;
-    let clonedProductData = JSON.parse(JSON.stringify(productData));
+    const clonedProductData = JSON.parse(JSON.stringify(productData));
 
     for (let i = 0; i < clonedProductData.options.length; i++) {
       // loop on the options array

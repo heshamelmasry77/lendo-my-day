@@ -38,11 +38,28 @@ export const fetchProducts = () => async (dispatch) => {
 };
 
 // Thunk to mimic fetching a single product by its ID from an API
-export const fetchProductById = (id) => async (dispatch) => {
+export const fetchProductById = (id) => async (dispatch, getState) => {
   dispatch(SET_SINGLE_PRODUCT(null)); // Reset the single product state to provide a loading experience
 
+  // Access the current state
+  const currentState = getState();
+
+  // Access the products from the listings slice
+  const productsFromState = currentState.listings.products;
+  console.log("productsFromState", productsFromState);
+  // if the user refreshed and no data in the state then use the data we have in the JSON file
+
+  let productsDataToUse;
+  if (productsFromState.length) {
+    productsDataToUse = productsFromState;
+  } else {
+    // Set products means that there is no data in the products state, so I need to reinitialize it
+    dispatch(SET_PRODUCTS(listingsData.items));
+    // use JSON data as my data to use to find
+    productsDataToUse = listingsData.items;
+  }
   try {
-    const singleProductData = listingsData.items.find(
+    const singleProductData = productsDataToUse.find(
       (product) => product.id === Number(id)
     );
     setTimeout(() => {
@@ -57,7 +74,20 @@ export const fetchProductById = (id) => async (dispatch) => {
   }
 };
 
-// Action to manually set the single product state from anywhere in the app
-export const setSingleProductState = (singleProduct) => (dispatch) => {
-  dispatch(SET_SINGLE_PRODUCT(singleProduct));
+export const updateProductsState = (products) => async (dispatch) => {
+  try {
+    console.log("here updateProducts");
+    dispatch(SET_PRODUCTS(products));
+  } catch (e) {
+    return console.error(e.message);
+  }
+};
+
+export const updateSingleProductState = (singleProduct) => async (dispatch) => {
+  try {
+    console.log("here updateSingleProductState");
+    dispatch(SET_SINGLE_PRODUCT(singleProduct));
+  } catch (e) {
+    return console.error(e.message);
+  }
 };

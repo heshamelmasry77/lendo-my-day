@@ -20,12 +20,12 @@ function ListingDetails() {
   // Access the single product from the store
   const { singleProduct } = useSelector((state) => state.listings);
 
-  // Fetch the product details only if not already present in the state
   useEffect(() => {
-    if (id && (!singleProduct || Object.keys(singleProduct).length === 0)) {
+    if (id) {
+      console.log("here", id);
       dispatch(fetchProductById(id));
     }
-  }, [dispatch, id, singleProduct]);
+  }, [dispatch, id]);
 
   // Handlers for updating selected variants and quantity
   const handleSelectedVariants = (options) => {

@@ -1,74 +1,102 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { setSingleProductState } from "./listingsSlice.js";
+import {
+  updateProductsState,
+  updateSingleProductState
+} from "./listingsSlice.js";
 
-// Define the cart state management slice.
+// Slice for managing the cart state within the Redux store.
 const slice = createSlice({
   name: "cart",
   initialState: {
-    // Initial state of the cart.
+    // Represents products added to the cart.
     productsInCart: [],
+    // Total count of products in the cart.
     numberOfProductsInCart: 0
   },
   reducers: {
-    // Reducer for adding a product to the cart.
+    // Adds a product to the cart.
     ADD_PRODUCT_TO_CART: (state, action) => {
-      // Update the productsInCart with the new product.
+      // Incorporate the new product to the cart.
       state.productsInCart.push(action.payload);
 
-      // Recalculate the total number of products in the cart.
+      // Tally up the number of items in the cart.
       state.numberOfProductsInCart = state.productsInCart.reduce(
         (total, product) => total + product.selectedQuantity,
         0
       );
     },
 
-    // Placeholder reducer for removing a product from the cart. Needs implementation.
+    // A stub for a future implementation to remove a product from the cart.
     REMOVE_PRODUCT_FROM_CART: (state, action) => {}
   }
 });
 
-// Export the reducer function to manage cart state.
+// Makes the cart reducer available for the Redux store.
 export default slice.reducer;
 
-// Destructure the action creators for easier access.
+// Easier reference to the action creators.
 const { ADD_PRODUCT_TO_CART, REMOVE_PRODUCT_FROM_CART } = slice.actions;
 
-// Thunk for asynchronously adding a single product to the cart.
+// Thunk: Add a product to the cart asynchronously.
 export const addSingleProductToCart =
-  (singleProduct, selectedVariant, selectedQuantity) => async (dispatch) => {
-    // Clone the product data to avoid mutating original state.
+  (singleProduct, selectedVariant, selectedQuantity) =>
+  async (dispatch, getState) => {
+    // Logs for debugging purposes.
+    // (Consider removing or minimizing these for production.)
+    console.log("singleProduct", singleProduct);
+    console.log("selectedVariant", selectedVariant);
+    console.log("selectedQuantity", selectedQuantity);
+
+    // Create a deep clone of the provided product to avoid mutating original data.
     const clonedProductData = JSON.parse(JSON.stringify(singleProduct));
 
-    // Iterate over the product options in the cloned product data to locate the selected variant.
+    // Update the quantity of the variant chosen by the user.
     clonedProductData.options.forEach((option) => {
-      // Determine if the current option corresponds to the selected variant
-      // by matching its attributes: color, power, and initial quantity.
       if (
         option.color === selectedVariant.color &&
         option.power === selectedVariant.power &&
         option.quantity === selectedVariant.quantity
       ) {
-        // The matching variant has been located.
-        // Update its quantity by subtracting the quantity selected by the user.
-        // The `Math.max` function ensures the updated quantity doesn't drop below 0.
+        // Update quantity, ensuring it doesn't go negative.
         option.quantity = Math.max(0, option.quantity - selectedQuantity);
       }
     });
 
-    // Dispatch an action from the listingsSlice to update the product data.
-    dispatch(setSingleProductState(clonedProductData));
+    // Fetch the current Redux state.
+    const currentState = getState();
 
-    // Create a product object with the updated data to add to cart.
+    // Extract the product list from the state.
+    const productsFromState = currentState.listings.products;
+
+    // Deep clone to work on a fresh copy.
+    const clonedProductsData = JSON.parse(JSON.stringify(productsFromState));
+
+    // Locate the updated product in the cloned products list.
+    let foundProduct = clonedProductsData.findIndex(
+      (product) => product.id === clonedProductData.id
+    );
+    // Overwrite it with the newly cloned and updated product data.
+    clonedProductsData[foundProduct] = clonedProductData;
+
+    // Push the updated product list and single product state to the Redux store.
+    dispatch(updateProductsState(clonedProductsData));
+    dispatch(updateSingleProductState(clonedProductData));
+
+    // Prepare the product details for cart addition.
     const productToAddToCart = {
       ...clonedProductData,
       selectedVariant,
       selectedQuantity
     };
 
-    // Dispatch the action to update the cart state with the new product.
+    // Add the product to the cart in the Redux store.
     dispatch(ADD_PRODUCT_TO_CART(productToAddToCart));
   };
 
-// Thunk for asynchronously removing a product from the cart. Needs implementation.
+// Thunk placeholder: Remove a product from the cart asynchronously.
 export const removeProductFromCart =
-  (productToRemoveFromCart) => async (dispatch) => {};
+  (productToRemoveFromCart) => async (dispatch) => {
+    console.log("productToRemoveFromCart: ", productToRemoveFromCart);
+    // Future implementation: Locate and remove the specified product from the cart.
+    // Additionally, update the single product's data.
+  };

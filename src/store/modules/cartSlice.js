@@ -57,6 +57,16 @@ const slice = createSlice({
         (total, product) => total + product.selectedQuantity,
         0
       );
+    },
+    UPDATE_PRODUCT_QUANTITY: (state, action) => {
+      console.log("UPDATE_PRODUCT_QUANTITY action.payload: ", action.payload);
+      const productIdToUpdate = action.payload.productId;
+      console.log("productIdToUpdate", productIdToUpdate);
+      const productQuantityToUpdate = action.payload.newQuantity;
+      console.log("productQuantityToUpdate", productQuantityToUpdate);
+      state.productsInCart[
+        state.productsInCart.findIndex((el) => el.id === productIdToUpdate)
+      ].selectedQuantity = productQuantityToUpdate;
     }
   }
 });
@@ -65,7 +75,11 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Easier reference to the action creators.
-const { ADD_PRODUCT_TO_CART, REMOVE_PRODUCT_FROM_CART } = slice.actions;
+const {
+  ADD_PRODUCT_TO_CART,
+  REMOVE_PRODUCT_FROM_CART,
+  UPDATE_PRODUCT_QUANTITY
+} = slice.actions;
 
 // Thunk: Add a product to the cart asynchronously.
 export const addSingleProductToCart =
@@ -202,4 +216,9 @@ export const removeProductFromCart =
     dispatch(updateProductsState(clonedProductsData));
 
     dispatch(REMOVE_PRODUCT_FROM_CART(productToRemoveFromCart));
+  };
+
+export const updateProductQuantity =
+  (newQuantity, productId) => (dispatch, getState) => {
+    dispatch(UPDATE_PRODUCT_QUANTITY({ newQuantity, productId }));
   };

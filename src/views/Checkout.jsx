@@ -1,7 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import ProductImage from "../components/shared/utils/ProductImage.jsx";
 import { NavLink } from "react-router-dom";
-import { removeProductFromCart } from "../store/modules/cartSlice.js";
+import {
+  removeProductFromCart,
+  updateProductQuantity
+} from "../store/modules/cartSlice.js";
 
 function CheckOut() {
   const dispatch = useDispatch();
@@ -19,8 +22,9 @@ function CheckOut() {
     )
     .toFixed(2);
 
-  const handleNewSelectedQuantity = (newSelectedQuantity) => {
+  const handleNewSelectedQuantity = (newSelectedQuantity, productId) => {
     console.log("newSelectedQuantity: ", newSelectedQuantity);
+    dispatch(updateProductQuantity(newSelectedQuantity, productId));
   };
 
   const handleRemoveProductFromCart = (selectedProductToRemove) => {
@@ -78,7 +82,8 @@ function CheckOut() {
                               value={product.selectedQuantity}
                               onChange={(e) =>
                                 handleNewSelectedQuantity(
-                                  JSON.parse(e.target.value)
+                                  JSON.parse(e.target.value),
+                                  product.id
                                 )
                               }
                             >

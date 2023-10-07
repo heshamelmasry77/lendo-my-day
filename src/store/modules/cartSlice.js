@@ -1,76 +1,74 @@
-// Importing necessary functionalities from the toolkit.
 import { createSlice } from "@reduxjs/toolkit";
 import { setSingleProductState } from "./listingsSlice.js";
 
-// Creating a new slice for the cart state management.
+// Define the cart state management slice.
 const slice = createSlice({
   name: "cart",
   initialState: {
-    // Defines the initial state of the cart.
+    // Initial state of the cart.
     productsInCart: [],
     numberOfProductsInCart: 0
   },
   reducers: {
-    // Reducer to add a product to the cart.
+    // Reducer for adding a product to the cart.
     ADD_PRODUCT_TO_CART: (state, action) => {
-      // Adds the product to the 'productsInCart' array.
+      // Update the productsInCart with the new product.
       state.productsInCart.push(action.payload);
-      console.log("state productsInCart ", state.productsInCart);
 
-      // Calculates the total number of products in the cart.
+      // Recalculate the total number of products in the cart.
       state.numberOfProductsInCart = state.productsInCart.reduce(
         (total, product) => total + product.selectedQuantity,
         0
       );
     },
 
-    // Placeholder reducer to remove a product from the cart.
+    // Placeholder reducer for removing a product from the cart. Needs implementation.
     REMOVE_PRODUCT_FROM_CART: (state, action) => {}
   }
 });
 
-// Exporting the cart's reducer.
+// Export the reducer function to manage cart state.
 export default slice.reducer;
 
-// Destructuring the actions from the slice for export.
+// Destructure the action creators for easier access.
 const { ADD_PRODUCT_TO_CART, REMOVE_PRODUCT_FROM_CART } = slice.actions;
 
-// Async action to add a single product to the cart.
+// Thunk for asynchronously adding a single product to the cart.
 export const addSingleProductToCart =
   (singleProduct, selectedVariant, selectedQuantity) => async (dispatch) => {
-    console.log(singleProduct, selectedVariant, selectedQuantity);
-
-    // Creates a deep copy of the single product data.
+    // Clone the product data to avoid mutating original state.
     const clonedProductData = JSON.parse(JSON.stringify(singleProduct));
 
-    // Updates the quantity of the selected variant based on the new quantity selected by the user.
+    // Iterate over the product options in the cloned product data to locate the selected variant.
     clonedProductData.options.forEach((option) => {
+      // Determine if the current option corresponds to the selected variant
+      // by matching its attributes: color, power, and initial quantity.
       if (
         option.color === selectedVariant.color &&
         option.power === selectedVariant.power &&
         option.quantity === selectedVariant.quantity
       ) {
-        // Ensures the product quantity doesn't go below zero.
+        // The matching variant has been located.
+        // Update its quantity by subtracting the quantity selected by the user.
+        // The `Math.max` function ensures the updated quantity doesn't drop below 0.
         option.quantity = Math.max(0, option.quantity - selectedQuantity);
-        console.log("Updated quantity:", option.quantity);
       }
     });
-    console.log("clonedProductData: ", clonedProductData);
 
-    // Dispatches an action to update the single product state with the cloned data.
+    // Dispatch an action from the listingsSlice to update the product data.
     dispatch(setSingleProductState(clonedProductData));
 
-    // Prepares the product object with selected variant and quantity.
+    // Create a product object with the updated data to add to cart.
     const productToAddToCart = {
       ...clonedProductData,
       selectedVariant,
       selectedQuantity
     };
 
-    // Dispatches an action to add the prepared product to the cart.
+    // Dispatch the action to update the cart state with the new product.
     dispatch(ADD_PRODUCT_TO_CART(productToAddToCart));
   };
 
-// Placeholder async action to remove a product from the cart.
+// Thunk for asynchronously removing a product from the cart. Needs implementation.
 export const removeProductFromCart =
   (productToRemoveFromCart) => async (dispatch) => {};

@@ -11,8 +11,8 @@ import ProductImage from "../components/shared/utils/ProductImage.jsx";
 
 function ListingDetails() {
   // State to manage selected variants and quantity for the product
-  const [selectedVariants, setSelectedVariants] = useState("Select Variant");
-  const [selectedQuantity, setSelectedQuantity] = useState("Select Quantity");
+  const [selectedVariants, setSelectedVariants] = useState(null);
+  const [selectedQuantity, setSelectedQuantity] = useState(null);
 
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -22,14 +22,13 @@ function ListingDetails() {
 
   useEffect(() => {
     if (id) {
-      console.log("here", id);
       dispatch(fetchProductById(id));
     }
   }, [dispatch, id]);
 
   // Handlers for updating selected variants and quantity
   const handleSelectedVariants = (options) => {
-    setSelectedVariants(options);
+    setSelectedVariants(JSON.stringify(options));
   };
   const handleSelectedQuantity = (quantity) => {
     setSelectedQuantity(quantity);
@@ -38,12 +37,15 @@ function ListingDetails() {
   // Handler to dispatch action for adding product to cart
   const handleAddProductToCart = () => {
     dispatch(
-      addSingleProductToCart(singleProduct, selectedVariants, selectedQuantity)
+      addSingleProductToCart(
+        singleProduct,
+        JSON.parse(selectedVariants),
+        JSON.parse(selectedQuantity)
+      )
     );
-
     // Reset the select option values after adding to cart
-    setSelectedVariants("Select Variant");
-    setSelectedQuantity("Select Quantity");
+    setSelectedVariants(null);
+    setSelectedQuantity(null);
   };
 
   return (
@@ -91,7 +93,9 @@ function ListingDetails() {
                 </div>
               )}
               <AddToCartButton
-                isEnabled={selectedVariants !== "Select Variant"}
+                isEnabled={
+                  selectedVariants !== null && selectedQuantity !== null
+                }
                 onClick={handleAddProductToCart}
               />
             </div>

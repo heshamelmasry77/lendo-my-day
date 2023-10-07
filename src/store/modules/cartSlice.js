@@ -19,7 +19,7 @@ const slice = createSlice({
       // Incorporate the new product to the cart.
       state.productsInCart.push(action.payload);
 
-      // Tally up the number of items in the cart.
+      // get the total number of products in the cart.
       state.numberOfProductsInCart = state.productsInCart.reduce(
         (total, product) => total + product.selectedQuantity,
         0
@@ -27,7 +27,37 @@ const slice = createSlice({
     },
 
     // A stub for a future implementation to remove a product from the cart.
-    REMOVE_PRODUCT_FROM_CART: (state, action) => {}
+    REMOVE_PRODUCT_FROM_CART: (state, action) => {
+      const productToRemove = action.payload;
+
+      const updatedCart = state.productsInCart.filter((product) => {
+        if (product.options.length !== productToRemove.options.length) {
+          return true; // They don't have the same number of options, so keep the product
+        }
+
+        for (let i = 0; i < product.options.length; i++) {
+          if (
+            product.options[i].color !== productToRemove.options[i].color ||
+            product.options[i].power !== productToRemove.options[i].power ||
+            product.options[i].quantity !== productToRemove.options[i].quantity
+          ) {
+            return true; // One of the options doesn't match, so keep the product
+          }
+        }
+
+        return false; // All options match, so exclude the product from the updated cart , remove the product
+      });
+
+      console.log("updatedCart: ", updatedCart);
+      // update the cart
+      state.productsInCart = updatedCart;
+
+      // get the total number of products in the cart.
+      state.numberOfProductsInCart = state.productsInCart.reduce(
+        (total, product) => total + product.selectedQuantity,
+        0
+      );
+    }
   }
 });
 
@@ -51,12 +81,22 @@ export const addSingleProductToCart =
     const clonedProductData = JSON.parse(JSON.stringify(singleProduct));
 
     // Update the quantity of the variant chosen by the user.
+    // Iterate over the product options in the cloned product data to locate the selected variant.
+
     clonedProductData.options.forEach((option) => {
-      if (
-        option.color === selectedVariant.color &&
-        option.power === selectedVariant.power &&
-        option.quantity === selectedVariant.quantity
-      ) {
+      // Iterate through each property of the selectedVariant
+      let allPropertiesMatch = true; // Starting with an assumption that they match
+      for (let property in selectedVariant) {
+        if (selectedVariant.hasOwnProperty(property)) {
+          // If a property does not match, then update the flag and break out of the loop
+          if (option[property] !== selectedVariant[property]) {
+            allPropertiesMatch = false;
+            break;
+          }
+        }
+      }
+      // If after iterating through all properties they all match
+      if (allPropertiesMatch) {
         // Update quantity, ensuring it doesn't go negative.
         option.quantity = Math.max(0, option.quantity - selectedQuantity);
       }
@@ -95,8 +135,71 @@ export const addSingleProductToCart =
 
 // Thunk placeholder: Remove a product from the cart asynchronously.
 export const removeProductFromCart =
-  (productToRemoveFromCart) => async (dispatch) => {
+  (productToRemoveFromCart) => async (dispatch, getState) => {
     console.log("productToRemoveFromCart: ", productToRemoveFromCart);
-    // Future implementation: Locate and remove the specified product from the cart.
-    // Additionally, update the single product's data.
+
+    // clone this product to remove
+    // update the quantity
+
+    // basically what this does that it iterate on the cloned product to remove options and compare it with the selectedVariant object
+    // once it find the same option object it update the quantity
+    // by adding the selected quantity back to the quantity.
+    const clonedProductRemoveFromCartData = JSON.parse(
+      JSON.stringify(productToRemoveFromCart)
+    );
+    console.log(clonedProductRemoveFromCartData);
+    clonedProductRemoveFromCartData.options.forEach((option) => {
+      // Iterate through each property of the selectedVariant
+      let allPropertiesMatch = true; // Starting with an assumption that they match
+      for (let property in clonedProductRemoveFromCartData.selectedVariant) {
+        if (
+          clonedProductRemoveFromCartData.selectedVariant.hasOwnProperty(
+            property
+          ) &&
+          property !== "quantity"
+        ) {
+          // If a property does not match, then update the flag and break out of the loop
+          if (
+            option[property] !==
+            clonedProductRemoveFromCartData.selectedVariant[property]
+          ) {
+            allPropertiesMatch = false;
+            break;
+          }
+        }
+      }
+      // If after iterating through all properties they all match
+      if (allPropertiesMatch) {
+        // Update quantity, ensuring it doesn't go negative.
+        option.quantity = Math.max(
+          0,
+          option.quantity + clonedProductRemoveFromCartData.selectedQuantity
+        );
+      }
+    });
+
+    console.log(
+      "clonedProductRemoveFromCartData",
+      clonedProductRemoveFromCartData
+    );
+
+    // Fetch the current Redux state.
+    const currentState = getState();
+
+    // Extract the products list from the state.
+    const productsFromState = currentState.listings.products;
+
+    // Deep clone to work on a fresh copy.
+    const clonedProductsData = JSON.parse(JSON.stringify(productsFromState));
+    // Locate the  product to remove from cart in the cloned products list.
+    let foundProduct = clonedProductsData.findIndex(
+      (product) => product.id === clonedProductRemoveFromCartData.id
+    );
+    // Overwrite it with the newly cloned and updated product to remove from cart data.
+    clonedProductsData[foundProduct] = clonedProductRemoveFromCartData;
+
+    // Push the updated products list state to the Redux store.
+    dispatch(updateProductsState(clonedProductsData));
+
+    dispatch(REMOVE_PRODUCT_FROM_CART(productToRemoveFromCart));
   };

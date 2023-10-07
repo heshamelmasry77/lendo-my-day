@@ -16,12 +16,13 @@ function ListingDetails() {
   const dispatch = useDispatch();
   const { id } = useParams();
   const { singleProduct } = useSelector((state) => state.listings); // GETS YOU THE PRODUCTS FROM THE STORE
+
   useEffect(() => {
-    if (id) {
-      //  id exists before calling fetchProduct is necessary to prevent errors.
+    if (id && (!singleProduct || Object.keys(singleProduct).length === 0)) {
+      // Ensure an id exists and singleProduct is empty before calling fetchProduct to prevent unnecessary calls.
       dispatch(fetchProductById(id));
     }
-  }, [dispatch, id]);
+  }, [dispatch, id, singleProduct]);
 
   const handleSelectedVariants = (options) => {
     // Refresh the selected Variants

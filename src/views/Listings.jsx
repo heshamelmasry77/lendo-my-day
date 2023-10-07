@@ -8,9 +8,16 @@ function Listings() {
   const dispatch = useDispatch(); // Help to dispatch actions, Example: dispatch(fetchProducts())
   const { products } = useSelector((state) => state.listings); // GETS THE PRODUCTS FROM THE STORE
 
+  // useEffect hook to fetch products on component mount
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    // Check if there are no products in the state before fetching
+    if (!products || products.length === 0) {
+      // If no products in state, dispatch the fetchProducts action
+      dispatch(fetchProducts());
+      console.log("ran");
+    }
+    // The dependencies array. This effect will re-run if dispatch or products change.
+  }, [dispatch, products]);
 
   return (
     <div className="bg-white">

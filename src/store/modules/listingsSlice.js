@@ -11,7 +11,7 @@ const slice = createSlice({
   initialState: {
     // Here is the initial state // = data
     products: [],
-    singleProduct: {}
+    singleProduct: null // null to indicate no product selected
   },
   reducers: {
     // Here are the functions which amend the state // mutations for state
@@ -43,14 +43,17 @@ export const fetchProducts = () => async (dispatch) => {
 
 export const fetchProductById = (id) => async (dispatch) => {
   // Reset the Single Product state to improve the UX of loading the product
-  dispatch(SET_SINGLE_PRODUCT({}));
+  dispatch(SET_SINGLE_PRODUCT(null)); // Reset the single product state
   try {
     // Imaginary fetch API call
     const singleProductData = listingsData.items.find(
       (product) => product.id === Number(id)
     );
     setTimeout(() => {
-      dispatch(SET_SINGLE_PRODUCT(singleProductData));
+      if (singleProductData) {
+        dispatch(SET_SINGLE_PRODUCT(singleProductData));
+      } else {
+      }
     }, 2000); // this will mimic 2-second delay as if I am fetching single product data from an API
   } catch (e) {
     return console.error(e.message);

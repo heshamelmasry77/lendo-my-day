@@ -1,62 +1,98 @@
 import { createSlice } from "@reduxjs/toolkit";
 import listingsData from "../../data/listings.json";
 
-// Slice
-// A function that accepts an initial state, an object full of reducer functions,
-// and a “slice name”, and automatically generates action creators and action types that correspond to the reducers and state.
-// The reducer argument is passed to createReducer()
-
+// Redux Slice to manage listings related data in the Redux store.
 const slice = createSlice({
   name: "listings",
   initialState: {
-    // Here is the initial state // = data
-    products: [],
-    singleProduct: {}
+    products: [], // Array to store all products
+    singleProduct: null // Variable to store details of a selected product
   },
   reducers: {
-    // Here are the functions which amend the state // mutations for state
+    // Action to set the list of products
     SET_PRODUCTS: (state, action) => {
       state.products = action.payload;
     },
+    // Action to set details of a single selected product
     SET_SINGLE_PRODUCT: (state, action) => {
       state.singleProduct = action.payload;
     }
   }
 });
-export default slice.reducer; // Here I import the module in the index.js
 
-// Actions // api calls etc
-const { SET_PRODUCTS } = slice.actions;
-const { SET_SINGLE_PRODUCT } = slice.actions;
+export default slice.reducer; // Exporting the reducer for use in the store
 
+// Destructuring actions for easier usage
+const { SET_PRODUCTS, SET_SINGLE_PRODUCT } = slice.actions;
+
+// Thunk to mimic fetching all products from an API
 export const fetchProducts = () => async (dispatch) => {
   try {
-    // Imaginary fetch API call
-
+    // This timeout mimics a network delay for fetching data from an API
     setTimeout(() => {
       dispatch(SET_PRODUCTS(listingsData.items));
-    }, 2000); // this will mimic 2-second delay as if i am fetching data from an API
+    }, 2000);
   } catch (e) {
     return console.error(e.message);
   }
 };
 
-export const fetchProductById = (id) => async (dispatch) => {
-  // Reset the Single Product state to improve the UX of loading the product
-  dispatch(SET_SINGLE_PRODUCT({}));
+// Thunk to mimic fetching a single product by its ID from an API
+export const fetchProductById = (id) => async (dispatch, getState) => {
+  dispatch(SET_SINGLE_PRODUCT(null)); // Reset the single product state to provide a loading experience
+  // Access the current state
+  const currentState = getState();
+
+  // Access the products from the listings slice
+  const productsFromState = currentState.listings.products;
+  console.log("productsFromState", productsFromState);
+  // if the user refreshed and no data in the state then use the data we have in the JSON file
+
+  let productsDataToUse;
+  if (productsFromState.length) {
+    productsDataToUse = productsFromState;
+  } else {
+    // Set products means that there is no data in the products state, so I need to reinitialize it
+    dispatch(SET_PRODUCTS(listingsData.items));
+    // use JSON data as my data to use to find
+    productsDataToUse = listingsData.items;
+  }
   try {
-    // Imaginary fetch API call
-    const singleProductData = listingsData.items.find(
+    const singleProductData = productsDataToUse.find(
       (product) => product.id === Number(id)
     );
     setTimeout(() => {
-      dispatch(SET_SINGLE_PRODUCT(singleProductData));
-    }, 2000); // this will mimic 2-second delay as if I am fetching single product data from an API
+      if (singleProductData) {
+        dispatch(SET_SINGLE_PRODUCT(singleProductData));
+      } else {
+        // Handle error or situations where no product matches the ID
+      }
+    }, 2000); // This timeout mimics a network delay for fetching data from an API
   } catch (e) {
     return console.error(e.message);
   }
 };
 
-export const setSingleProductState = (singleProduct) => (dispatch) => {
-  dispatch(SET_SINGLE_PRODUCT(singleProduct));
+export const updateProductsState = (products) => async (dispatch) => {
+  try {
+    console.log("here updateProducts");
+    dispatch(SET_PRODUCTS(products));
+  } catch (e) {
+    return console.error(e.message);
+  }
 };
+
+export const updateSingleProductState =
+  (productId) => async (dispatch, getState) => {
+    try {
+      console.log(productId);
+      console.log("Starting product update...");
+
+      // Call the fetchProductById thunk with the productId to update the product
+      await dispatch(fetchProductById(productId));
+
+      console.log("Product updated successfully!");
+    } catch (e) {
+      return console.error(e.message);
+    }
+  };

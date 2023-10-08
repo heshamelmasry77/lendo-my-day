@@ -1,57 +1,138 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { setSingleProductState } from "./listingsSlice.js";
+import {
+  updateProductsState,
+  updateSingleProductState
+} from "./listingsSlice.js";
+import {
+  findObjectInArrayById,
+  removeObjectInArrayById
+} from "../utils/index.js";
+import {
+  getTotalProductsInCart,
+  updateProductsInCartQuantities
+} from "../utils/cartUtils.js";
+import { updateProductsQuantities } from "../utils/listingsUtils.js";
 
+// Slice for managing the cart state within the Redux store.
 const slice = createSlice({
   name: "cart",
   initialState: {
-    // Here is the initial state // = data
+    // Represents products added to the cart.
     productsInCart: [],
+    // Total count of products in the cart.
     numberOfProductsInCart: 0
   },
   reducers: {
+    // Adds a product to the cart.
     ADD_PRODUCT_TO_CART: (state, action) => {
+      // Incorporate the new product to the cart.
       state.productsInCart.push(action.payload);
 
-      const totalSelectedQuantity = state.productsInCart.reduce(
-        (total, product) => total + product.selectedQuantity,
-        0
+      // get the total number of products in the cart.
+      state.numberOfProductsInCart = getTotalProductsInCart(
+        state.productsInCart
       );
-      state.numberOfProductsInCart = totalSelectedQuantity;
+    },
+
+    REMOVE_PRODUCT_FROM_CART: (state, action) => {
+      const productToRemove = action.payload;
+      const updatedCart = removeObjectInArrayById(
+        state.productsInCart,
+        productToRemove.id
+      );
+      state.productsInCart = updatedCart;
+      // get the total number of products in the cart.
+      state.numberOfProductsInCart = getTotalProductsInCart(
+        state.productsInCart
+      );
+    },
+
+    UPDATE_PRODUCT_QUANTITY: (state, action) => {
+      const productQuantityToUpdate = action.payload.newQuantity;
+      const productToUpdate = action.payload.productToUpdate;
+
+      const updatedCart = updateProductsInCartQuantities(
+        state.productsInCart,
+        productToUpdate,
+        productQuantityToUpdate
+      );
+      state.productsInCart = updatedCart;
+      // get the total number of products in the cart.
+      state.numberOfProductsInCart = getTotalProductsInCart(
+        state.productsInCart
+      );
     }
   }
 });
-export default slice.reducer; // Here I import the module in the index.js
 
-// Actions // api calls etc
-const { ADD_PRODUCT_TO_CART } = slice.actions;
+// Makes the cart reducer available for the Redux store.
+export default slice.reducer;
 
+// Easier reference to the action creators.
+const {
+  ADD_PRODUCT_TO_CART,
+  REMOVE_PRODUCT_FROM_CART,
+  UPDATE_PRODUCT_QUANTITY
+} = slice.actions;
+
+// Thunk: Add a product to the cart asynchronously.
 export const addSingleProductToCart =
-  (productData, selectedVariant, selectedQuantity) => async (dispatch) => {
-    const quantityToReduce = selectedQuantity;
-    const clonedProductData = JSON.parse(JSON.stringify(productData));
-
-    for (let i = 0; i < clonedProductData.options.length; i++) {
-      // loop on the options array
-      // Compare both objects
-      if (
-        Object.entries(clonedProductData.options[i]).toString() ===
-        Object.entries(selectedVariant).toString()
-      ) {
-        //  if I find the object then
-        clonedProductData.options[i] = {
-          ...selectedVariant,
-          quantity: Math.max(0, selectedVariant.quantity - quantityToReduce) // ensure quantity doesn't go negative
-        };
-      }
-    }
-
+  (singleProduct, selectedVariant, selectedQuantity) =>
+  async (dispatch, getState) => {
+    // Prepare the product details for cart addition.
     const productToAddToCart = {
-      ...clonedProductData,
+      ...singleProduct,
       selectedVariant,
       selectedQuantity
     };
-    // Add the Product to the cart
+    const currentState = getState();
+    // Extract the products list from the state.
+    const productsFromState = currentState.listings.products;
+    const updatedProducts = updateProductsQuantities(
+      productsFromState,
+      productToAddToCart,
+      selectedQuantity,
+      "ADD_TO_CART"
+    );
+    console.log("updatedProducts: ", updatedProducts);
+    dispatch(updateProductsState(updatedProducts));
+    dispatch(updateSingleProductState(productToAddToCart.id));
+    // Add the product to the cart in the Redux store.
     dispatch(ADD_PRODUCT_TO_CART(productToAddToCart));
-    // Updates the single product state
-    dispatch(setSingleProductState(clonedProductData));
+  };
+
+// Thunk placeholder: Remove a product from the cart asynchronously.
+export const removeProductFromCart =
+  (productToRemoveFromCart) => async (dispatch, getState) => {
+    console.log("productToRemoveFromCart: ", productToRemoveFromCart);
+    const currentState = getState();
+    // Extract the products list from the state.
+    const productsFromState = currentState.listings.products;
+    const updatedProducts = updateProductsQuantities(
+      productsFromState,
+      productToRemoveFromCart,
+      productToRemoveFromCart.selectedQuantity,
+      "REMOVE_FROM_CART"
+    );
+    console.log("updatedProducts: ", updatedProducts);
+    dispatch(updateProductsState(updatedProducts));
+
+    dispatch(REMOVE_PRODUCT_FROM_CART(productToRemoveFromCart));
+  };
+
+export const updateProductQuantity =
+  (newQuantity, productToUpdate) => (dispatch, getState) => {
+    dispatch(UPDATE_PRODUCT_QUANTITY({ newQuantity, productToUpdate }));
+    const currentState = getState();
+    // Extract the products list from the state.
+    const productsFromState = currentState.listings.products;
+
+    const updatedProducts = updateProductsQuantities(
+      productsFromState,
+      productToUpdate,
+      newQuantity,
+      "UPDATE_PRODUCT_IN_CART"
+    );
+    console.log("updatedProducts: ", updatedProducts);
+    dispatch(updateProductsState(updatedProducts));
   };

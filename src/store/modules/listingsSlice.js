@@ -40,7 +40,6 @@ export const fetchProducts = () => async (dispatch) => {
 // Thunk to mimic fetching a single product by its ID from an API
 export const fetchProductById = (id) => async (dispatch, getState) => {
   dispatch(SET_SINGLE_PRODUCT(null)); // Reset the single product state to provide a loading experience
-
   // Access the current state
   const currentState = getState();
 
@@ -83,11 +82,17 @@ export const updateProductsState = (products) => async (dispatch) => {
   }
 };
 
-export const updateSingleProductState = (singleProduct) => async (dispatch) => {
-  try {
-    console.log("here updateSingleProductState");
-    dispatch(SET_SINGLE_PRODUCT(singleProduct));
-  } catch (e) {
-    return console.error(e.message);
-  }
-};
+export const updateSingleProductState =
+  (productId) => async (dispatch, getState) => {
+    try {
+      console.log(productId);
+      console.log("Starting product update...");
+
+      // Call the fetchProductById thunk with the productId to update the product
+      await dispatch(fetchProductById(productId));
+
+      console.log("Product updated successfully!");
+    } catch (e) {
+      return console.error(e.message);
+    }
+  };

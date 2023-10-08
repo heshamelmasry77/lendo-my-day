@@ -96,6 +96,7 @@ export const addSingleProductToCart =
     );
     console.log("updatedProducts: ", updatedProducts);
     dispatch(updateProductsState(updatedProducts));
+    dispatch(updateSingleProductState(productToAddToCart.id));
     // Add the product to the cart in the Redux store.
     dispatch(ADD_PRODUCT_TO_CART(productToAddToCart));
   };

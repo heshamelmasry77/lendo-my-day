@@ -2,7 +2,7 @@
  * Computes the total quantity of products in the cart.
  *
  * @param {Array<Object>} cartItems - The array of products in the cart.
- * @returns {number} - The total quantity of products in the cart.
+ * @return {number} - The total quantity of products in the cart.
  */
 export const getTotalProductsInCart = (cartItems) => {
   return cartItems.reduce(
@@ -18,7 +18,7 @@ export const getTotalProductsInCart = (cartItems) => {
  * @param {Array} products - The array of products.
  * @param {Object} productData - The Data of the product to be updated.
  * @param {number} newQuantity - The new quantity to be set.
- * @returns {Array} - Updated array of products.
+ * @return {Array} - Updated array of products.
  */
 export const updateProductsInCartQuantities = (
   products,

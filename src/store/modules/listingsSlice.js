@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import listingsData from "../../data/listings.json";
+import { setLoadingState } from "./loaderSlice";
 
 // Slice for managing listings-related data in the Redux store.
 const slice = createSlice({
@@ -26,9 +27,11 @@ const { SET_PRODUCTS, SET_SINGLE_PRODUCT } = slice.actions;
 
 // Fake fetching all products from an API.
 export const fetchProducts = () => async (dispatch) => {
+  dispatch(setLoadingState(true));
   try {
     setTimeout(() => {
       dispatch(SET_PRODUCTS(listingsData.items));
+      dispatch(setLoadingState(false));
     }, 2000); // Mimic a network delay
   } catch (e) {
     return console.error(e.message);
@@ -37,11 +40,13 @@ export const fetchProducts = () => async (dispatch) => {
 
 //  Fake fetching a single product by its ID from an API.
 export const fetchProductById = (id) => async (dispatch, getState) => {
+  dispatch(setLoadingState(true));
+
   dispatch(SET_SINGLE_PRODUCT(null)); // Clear the single product for loading feedback
   const currentState = getState();
   const productsFromState = currentState.listings.products;
 
-  let productsDataToUse = productsFromState.length
+  const productsDataToUse = productsFromState.length
     ? productsFromState
     : listingsData.items;
   if (!productsFromState.length) {
@@ -56,8 +61,9 @@ export const fetchProductById = (id) => async (dispatch, getState) => {
       if (singleProductData) {
         dispatch(SET_SINGLE_PRODUCT(singleProductData));
       } else {
-        // Handle scenarios where no product matches the provided ID
+        // Todo Handle scenarios where no product matches the provided ID
       }
+      dispatch(setLoadingState(false));
     }, 2000); // Mimic a network delay
   } catch (e) {
     return console.error(e.message);

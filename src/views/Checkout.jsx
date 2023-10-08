@@ -22,9 +22,9 @@ function CheckOut() {
     )
     .toFixed(2);
 
-  const handleNewSelectedQuantity = (newSelectedQuantity, productId) => {
+  const handleNewSelectedQuantity = (newSelectedQuantity, productToUpdate) => {
     console.log("newSelectedQuantity: ", newSelectedQuantity);
-    dispatch(updateProductQuantity(newSelectedQuantity, productId));
+    dispatch(updateProductQuantity(newSelectedQuantity, productToUpdate));
   };
 
   const handleRemoveProductFromCart = (selectedProductToRemove) => {
@@ -83,7 +83,7 @@ function CheckOut() {
                               onChange={(e) =>
                                 handleNewSelectedQuantity(
                                   JSON.parse(e.target.value),
-                                  product.id
+                                  product
                                 )
                               }
                             >

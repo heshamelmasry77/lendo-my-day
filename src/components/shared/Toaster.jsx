@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { Transition } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/20/solid";
@@ -12,6 +12,19 @@ function Toaster() {
   function handleCloseToaster() {
     dispatch(closeToaster());
   }
+
+  useEffect(() => {
+    let timer;
+    if (isToaster) {
+      // Set up the timer to close the toaster after 2 seconds
+      timer = setTimeout(() => {
+        handleCloseToaster();
+      }, 4000);
+    }
+
+    // Clear the timer when the component gets unmounted or if the toaster gets closed
+    return () => clearTimeout(timer);
+  }, [isToaster]);
 
   return (
     <>

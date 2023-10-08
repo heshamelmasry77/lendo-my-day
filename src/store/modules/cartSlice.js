@@ -3,7 +3,7 @@ import {
   updateProductsState,
   updateSingleProductState
 } from "./listingsSlice.js";
-import { setToasterState } from "./toasterSlice.js";
+import { closeToaster, setToasterState } from "./toasterSlice.js";
 
 import { removeObjectInArrayById } from "../utils/index.js";
 import {

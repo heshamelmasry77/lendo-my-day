@@ -150,7 +150,8 @@ function CheckOut() {
         <div className="flex-1 overflow-y-auto px-4 py-8 sm:px-8">
           <div className="flex flex-col gap-y-6">
             <h2 className="text-xl font-medium text-gray-700">
-              Your cart seems empty. Let's fill it with some amazing products!
+              Your cart seems empty. Let&apos;s fill it with some amazing
+              products!
             </h2>
             <NavLink
               to={"/"}

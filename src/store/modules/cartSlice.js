@@ -3,6 +3,8 @@ import {
   updateProductsState,
   updateSingleProductState
 } from "./listingsSlice.js";
+import { setToasterState } from "./toasterSlice.js";
+
 import { removeObjectInArrayById } from "../utils/index.js";
 import {
   getTotalProductsInCart,
@@ -102,6 +104,7 @@ export const addSingleProductToCart =
     dispatch(updateProductsState(updatedProducts));
     dispatch(updateSingleProductState(productToAddToCart.id));
     dispatch(ADD_PRODUCT_TO_CART(productToAddToCart));
+    dispatch(setToasterState(true, "Your product is added to the cart ;)"));
   };
 
 // Handle the action of removing a product from the cart.

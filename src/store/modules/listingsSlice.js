@@ -41,7 +41,7 @@ export const fetchProductById = (id) => async (dispatch, getState) => {
   const currentState = getState();
   const productsFromState = currentState.listings.products;
 
-  let productsDataToUse = productsFromState.length
+  const productsDataToUse = productsFromState.length
     ? productsFromState
     : listingsData.items;
   if (!productsFromState.length) {

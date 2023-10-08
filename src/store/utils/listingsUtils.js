@@ -13,8 +13,8 @@ const CART_OPERATIONS = {
  * @param {Array} products - The array of products.
  * @param {Object} productData - The product to be updated.
  * @param {number} selectedQuantity - The new selectedVariant to be set.
- * @param action
- * @returns {Array} - Updated array of products.
+ * @param {string} action - This defines the action we are doing with the cart
+ * @return {Array} - Updated array of products.
  */
 export const updateProductsQuantities = (
   products,

@@ -10,7 +10,6 @@ function CheckOut() {
   const dispatch = useDispatch();
 
   const { productsInCart } = useSelector((state) => state.cart); // GETS THE PRODUCTS IN CART
-  console.log("productsInCart: ", productsInCart);
 
   // Calculate the combined total price of all products in the cart.
   // The total is formatted to have two decimal places for standard currency representation.
@@ -23,7 +22,6 @@ function CheckOut() {
     .toFixed(2);
 
   const handleNewSelectedQuantity = (newSelectedQuantity, productToUpdate) => {
-    console.log("newSelectedQuantity: ", newSelectedQuantity);
     dispatch(updateProductQuantity(newSelectedQuantity, productToUpdate));
   };
 

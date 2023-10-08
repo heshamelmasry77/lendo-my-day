@@ -1,62 +1,53 @@
 import { createSlice } from "@reduxjs/toolkit";
 import listingsData from "../../data/listings.json";
 
-// Redux Slice to manage listings related data in the Redux store.
+// Slice for managing listings-related data in the Redux store.
 const slice = createSlice({
   name: "listings",
   initialState: {
-    products: [], // Array to store all products
-    singleProduct: null // Variable to store details of a selected product
+    products: [], // Store all products
+    singleProduct: null // Store details of a selected product
   },
   reducers: {
-    // Action to set the list of products
+    // Set the list of products in the state
     SET_PRODUCTS: (state, action) => {
       state.products = action.payload;
     },
-    // Action to set details of a single selected product
+    // Set details of a specific product in the state
     SET_SINGLE_PRODUCT: (state, action) => {
       state.singleProduct = action.payload;
     }
   }
 });
 
-export default slice.reducer; // Exporting the reducer for use in the store
+export default slice.reducer;
 
-// Destructuring actions for easier usage
 const { SET_PRODUCTS, SET_SINGLE_PRODUCT } = slice.actions;
 
-// Thunk to mimic fetching all products from an API
+// Fake fetching all products from an API.
 export const fetchProducts = () => async (dispatch) => {
   try {
-    // This timeout mimics a network delay for fetching data from an API
     setTimeout(() => {
       dispatch(SET_PRODUCTS(listingsData.items));
-    }, 2000);
+    }, 2000); // Mimic a network delay
   } catch (e) {
     return console.error(e.message);
   }
 };
 
-// Thunk to mimic fetching a single product by its ID from an API
+//  Fake fetching a single product by its ID from an API.
 export const fetchProductById = (id) => async (dispatch, getState) => {
-  dispatch(SET_SINGLE_PRODUCT(null)); // Reset the single product state to provide a loading experience
-  // Access the current state
+  dispatch(SET_SINGLE_PRODUCT(null)); // Clear the single product for loading feedback
   const currentState = getState();
-
-  // Access the products from the listings slice
   const productsFromState = currentState.listings.products;
-  console.log("productsFromState", productsFromState);
-  // if the user refreshed and no data in the state then use the data we have in the JSON file
 
-  let productsDataToUse;
-  if (productsFromState.length) {
-    productsDataToUse = productsFromState;
-  } else {
-    // Set products means that there is no data in the products state, so I need to reinitialize it
+  let productsDataToUse = productsFromState.length
+    ? productsFromState
+    : listingsData.items;
+  if (!productsFromState.length) {
     dispatch(SET_PRODUCTS(listingsData.items));
-    // use JSON data as my data to use to find
-    productsDataToUse = listingsData.items;
   }
+
   try {
     const singleProductData = productsDataToUse.find(
       (product) => product.id === Number(id)
@@ -65,33 +56,28 @@ export const fetchProductById = (id) => async (dispatch, getState) => {
       if (singleProductData) {
         dispatch(SET_SINGLE_PRODUCT(singleProductData));
       } else {
-        // Handle error or situations where no product matches the ID
+        // Handle scenarios where no product matches the provided ID
       }
-    }, 2000); // This timeout mimics a network delay for fetching data from an API
+    }, 2000); // Mimic a network delay
   } catch (e) {
     return console.error(e.message);
   }
 };
 
+// Update the products state with the provided products.
 export const updateProductsState = (products) => async (dispatch) => {
   try {
-    console.log("here updateProducts");
     dispatch(SET_PRODUCTS(products));
   } catch (e) {
     return console.error(e.message);
   }
 };
 
+// Update the state of a single product.
 export const updateSingleProductState =
   (productId) => async (dispatch, getState) => {
     try {
-      console.log(productId);
-      console.log("Starting product update...");
-
-      // Call the fetchProductById thunk with the productId to update the product
       await dispatch(fetchProductById(productId));
-
-      console.log("Product updated successfully!");
     } catch (e) {
       return console.error(e.message);
     }

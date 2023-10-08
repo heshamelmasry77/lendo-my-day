@@ -29,7 +29,6 @@ export const updateProductsQuantities = (
   const productToUpdate = updatedProducts.find(
     (product) => product.id === productData.id
   );
-  console.log("productToUpdate", productToUpdate);
 
   if (!productToUpdate) {
     // If product not found, return original products array
@@ -46,7 +45,6 @@ export const updateProductsQuantities = (
     })
   );
 
-  console.log("variantToUpdate:", variantToUpdate);
   if (variantToUpdate) {
     switch (action) {
       case CART_OPERATIONS.ADD_TO_CART:
@@ -59,13 +57,7 @@ export const updateProductsQuantities = (
 
       case CART_OPERATIONS.UPDATE_PRODUCT_IN_CART:
         // calculate the diff between productData.selectedQuantity and selectedQuantity
-        console.log("new selectedQuantity", selectedQuantity);
-        console.log(
-          "productData.selectedQuantity",
-          productData.selectedQuantity
-        );
         const difference = selectedQuantity - productData.selectedQuantity;
-        console.log("difference: ", difference);
         // Update the quantity in the stock based on the difference.
         variantToUpdate.quantity -= difference; // If difference is negative, it will effectively add to the stock.
         variantToUpdate.quantity = Math.max(0, variantToUpdate.quantity); // Ensure quantity doesn't go negative.

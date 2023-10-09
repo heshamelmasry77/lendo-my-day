@@ -75,3 +75,4 @@ Now, open your browser and navigate to the local server (usually `http://localho
 1. Refactor and optimize the cart functionality.
 2. UI improvements for a more engaging user experience.
 3. Writing Cypress tests for better reliability.
+4. Fix issues and some bugs

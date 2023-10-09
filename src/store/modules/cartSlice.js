@@ -3,9 +3,8 @@ import {
   updateProductsState,
   updateSingleProductState
 } from "./listingsSlice.js";
-import { closeToaster, setToasterState } from "./toasterSlice.js";
+import { setToasterState } from "./toasterSlice.js";
 
-import { removeObjectInArrayById } from "../utils/index.js";
 import {
   getTotalProductsInCart,
   updateProductsInCartQuantities
@@ -52,10 +51,33 @@ const slice = createSlice({
     // Handle removing a product from the cart.
     REMOVE_PRODUCT_FROM_CART: (state, action) => {
       const productToRemove = action.payload;
-      state.productsInCart = removeObjectInArrayById(
-        state.productsInCart,
-        productToRemove.id
-      );
+
+      // Search for a product in the cart that matches  ID and selectedVariant.
+      const matchingProduct = state.productsInCart.find((product) => {
+        // Exclude products that don't have a matching ID.
+        if (product.id !== productToRemove.id) return false;
+
+        // Compare the properties of selectedVariant (except 'quantity') for a match.
+        return Object.keys(product.selectedVariant).every((key) => {
+          // Not concerned with the 'quantity' attribute here skip it.
+          if (key === "quantity") return true;
+
+          // Ensure the remaining variant properties match between the cart product and the product to remove.
+          return (
+            product.selectedVariant[key] ===
+            productToRemove.selectedVariant[key]
+          );
+        });
+      });
+
+      // If successfully find a product in the cart that matches the criteria.. :D
+      if (matchingProduct) {
+        // Filter out the identified product from the cart.
+        state.productsInCart = state.productsInCart.filter(
+          (product) => product !== matchingProduct
+        );
+      }
+
       state.numberOfProductsInCart = getTotalProductsInCart(
         state.productsInCart
       );
